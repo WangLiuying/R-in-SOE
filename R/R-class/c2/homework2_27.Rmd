@@ -1,0 +1,53 @@
+---
+title: "homework chapter2"
+author: "王柳盈"
+date: "2017年2月27日"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1. Read the manual of package "Performance Analytics"
+
+```{r}
+#install.packages("PerformanceAnalytics")
+library("PerformanceAnalytics")
+help(package="PerformanceAnalytics")
+library("quantmod")
+getSymbols("^GSPC",src="yahoo",from="1990-1-1",to=Sys.Date())
+getSymbols("BABA",src="yahoo",from="2015-1-1",to=Sys.Date())
+```
+
+2. Draw the following graphic using "chart.Correlation"
+
+chart.Correlation(R, histogram = TRUE, method = c("pearson", "kendall",
+  "spearman"), ...)
+
+```{r}
+#?chart.Correlation
+head(GSPC)
+chart.Correlation(GSPC[,4:5])
+```
+
+3. Draw the following graphic using "chart.TimeSeries"
+
+chart.TimeSeries(R, auto.grid = TRUE, xaxis = TRUE, yaxis = TRUE,
+  yaxis.right = FALSE, type = "l", lty = 1, lwd = 2, las = par("las"),
+  main = NULL, ylab = NULL, xlab = "", date.format.in = "%Y-%m-%d",
+  date.format = NULL, xlim = NULL, ylim = NULL,
+  element.color = "darkgray", event.lines = NULL, event.labels = NULL,
+  period.areas = NULL, event.color = "darkgray",
+  period.color = "aliceblue", colorset = (1:12), pch = (1:12),
+  legend.loc = NULL, ylog = FALSE, cex.axis = 0.8, cex.legend = 0.8,
+  cex.lab = 1, cex.labels = 0.8, cex.main = 1, major.ticks = "auto",
+  minor.ticks = TRUE, grid.color = "lightgray", grid.lty = "dotted",
+  xaxis.labels = NULL, ...)
+```{r}
+#?chart.TimeSeries
+head(BABA)
+chart.TimeSeries(BABA[,6],grid.color="red")
+#时间区间调整用参数xlim
+```
+
