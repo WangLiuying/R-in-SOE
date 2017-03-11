@@ -47,7 +47,7 @@ chart.TimeSeries(R, auto.grid = TRUE, xaxis = TRUE, yaxis = TRUE,
 ```{r}
 #?chart.TimeSeries
 head(BABA)
-chart.TimeSeries(BABA[,6],grid.color="red")
+chart.TimeSeries(BABA[,6],element.color="red",event.color="black",grid.color="red")
 #时间区间调整用参数xlim
 ```
 
