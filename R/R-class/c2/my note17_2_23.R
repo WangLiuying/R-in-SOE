@@ -588,3 +588,61 @@ file.exists("Decay.txt")
 #Ctex
 #Lyx smaller
 #package knitr
+
+
+#install.packages("XML")
+#install.packages("RCurl")
+#install.packages("stringr")
+library(XML)
+library(RCurl)
+library(stringr)
+url <- "http://www.stateair.net/web/historical/1/1.html"
+page_parse <- htmlParse(url,encoding="UTF-8")
+links <- getHTMLLinks(url)
+filename <- "Beijing_2017_HourlyPM25_created20170301.csv"
+url1 <- "http://www.stateair.net/web/assets/historical/1/"
+u.full <- paste(url1,filename,sep="")
+Beijing.2017 <- read.csv(u.full,skip=3,encoding="utf-8")
+class(Beijing.2017)
+head(Beijing.2017)
+#编码转换
+Beijing.2017$Unit <- iconv(Beijing.2017$Unit,from="windows-1252",to="GB2312")
+head(Beijing.2017)
+
+#have a try
+links
+csvlinks <-str_detect(links,pattern="http://www.stateair.net.+.csv")
+csvlinks <- links[csvlinks]
+Beijing.air <- data.frame()
+for (i in seq_along(csvlinks))
+{
+  if (i==1) Beijing.air <- read.csv(csvlinks[i],skip=3,encoding="utf-8")
+  Beijing.air1 <- read.csv(csvlinks[i],skip=3,encoding="utf-8")
+  Beijing.air <- rbind(Beijing.air,Beijing.air1)
+  Sys.sleep(3)
+}
+
+#teacher version
+linkcsv <- links[str_detect(string=links,".csv")]
+linkcsv
+linkcsv_list <- as.list(linkcsv)
+linkcsv_list
+#execute download
+all.data <- data.frame
+for(i in 1:length(linkcsv_list))
+{
+  all.data <- rbind(all.data,read.csv(linkcsv_list[[i]],skip=3,encoding="utf-8"))
+  Sys.sleep(3)
+}
+
+
+#中文pdf制作（待学）
+devtools::install_github("yihui/xaringan")
+devtools::install_github("rstudio/addinexamples",type="source")
+
+
+
+install.packages("wordcloud2")
+library(wordcloud2)
+wf <- wordfreq(words) #udf
+wordcloud2(wf,color="random-light",backgroundcolor="grey")
