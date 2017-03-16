@@ -641,8 +641,10 @@ devtools::install_github("yihui/xaringan")
 devtools::install_github("rstudio/addinexamples",type="source")
 
 
-
+#wordcloud
 install.packages("wordcloud2")
 library(wordcloud2)
 wf <- wordfreq(words) #udf
 wordcloud2(wf,color="random-light",backgroundcolor="grey")
+
+
