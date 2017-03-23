@@ -195,3 +195,75 @@ long<-reshape(Data,idvar="country",varying=list(names(Data)[3:5]),
 long <- long[order(long$country),]
 wide <- reshape(long, v.names="GDP", idvar="country", timevar="year", direction="wide")
 wide
+
+
+trdata <- read.csv("clipboard")
+head(trdata)
+tr.wide <- dcast(trdata,...~year,value.var="rgdpl")
+tr.long <- melt(tr.wide,id.vars = c("country","country.isocode"),value.name="rgdpl")
+tr.long <- tr.long[order(tr.long$country),]
+
+#merge
+setwd("D:/DataAnalysis/R's workingspace/R-class XuHaifeng/R/R-class/c3/Data")
+library(stringr)
+filename <- c("brazil_daily.csv","China_daily.csv","India_daily.csv","Rusia_daily.csv")
+mymerge <- function(filename)
+{
+  for (i in filename)
+  {
+    if (i == filename[1])
+    {
+      mydata <- read.csv(i)[, c("Date", "Adj.Close")]
+      mydata$Date <- as.Date(mydata$Date)
+      names(mydata) <- c("Date", str_extract(i, pattern = "\\D+_"))
+    }
+    else
+    {
+      mydata.temp <- read.csv(i)[, c("Date", "Adj.Close")]
+      names(mydata.temp) <- c("Date", str_extract(i, pattern = "\\D+_"))
+      mydata.temp$Date <- as.Date(mydata.temp$Date)
+      mydata <- merge(x = mydata, y = mydata.temp)
+    }
+  }
+  return(mydata)
+}
+data.bric <- mymerge(filename)
+
+##字符串操作
+person <- "Jared"
+partySize <- "eight"
+waitTime <- 25
+paste("Hello ",person,", your party of ",partySize,
+      " will be seated in ",waitTime," minutes.",sep="")
+sprintf("Hello %s, your party of %s will be seated in %s minutes",
+        person, partySize, waitTime)
+sprintf("Hello %s, your party of %s will be seated in %s minutes",
+        c("Jared", "Bob"), c("eight", 16, "four", 10), waitTime)
+
+##
+library(stringr)
+library(XML)
+load("presidents.rdata")
+# theURL <- "http://www.loc.gov/rr/print/list/057_chron.html"
+# presidents <- readHTMLTable(theURL, which=3, as.data.frame=TRUE,
+#                             skip.rows=1, header=TRUE,
+#                             stringsAsFactors=FALSE)
+head(presidents)
+tail(presidents)
+presidents <- presidents[1:64,]
+yearList <-  str_split(string=presidents$YEAR,pattern="-")
+# a=c(1,2,2,4,5)
+# Reduce("+",a)
+# cadd <- function(x) Reduce("+",x,accumulate=T)
+# cadd(seq_len(7))
+yearMatrix <- data.frame(Reduce(rbind, yearList))
+head(yearMatrix)
+names(yearMatrix) <- c("Start", "Stop")
+presidents <- cbind(presidents, yearMatrix)
+presidents$Start <- as.numeric(as.character(presidents$Start))
+presidents$Stop <- as.numeric(as.character(presidents$Stop))
+head(presidents)
+tail(presidents)
+str_sub(string = presidents$PRESIDENT, start = 1, end = 3)
+presidents[str_sub(string = presidents$Start, start = 4,
+                   end = 4) == 1, c("YEAR", "PRESIDENT", "Start", "Stop")]
