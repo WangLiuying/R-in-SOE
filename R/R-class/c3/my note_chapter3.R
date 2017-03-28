@@ -241,6 +241,7 @@ sprintf("Hello %s, your party of %s will be seated in %s minutes",
         c("Jared", "Bob"), c("eight", 16, "four", 10), waitTime)
 
 ##
+library(RCurl)
 library(stringr)
 library(XML)
 load("presidents.rdata")
@@ -267,3 +268,76 @@ tail(presidents)
 str_sub(string = presidents$PRESIDENT, start = 1, end = 3)
 presidents[str_sub(string = presidents$Start, start = 4,
                    end = 4) == 1, c("YEAR", "PRESIDENT", "Start", "Stop")]
+
+johnPos <- str_detect(string=presidents$PRESIDENT,pattern="John")
+presidents[johnPos,c("YEAR","PRESIDENT","Start","Stop")]
+goodSearch <- str_detect(presidents$PRESIDENT,ignore.case("john"))
+?modifiers
+sum(str_detect(presidents$PRESIDENT,coll("john",ignore_case = T)))
+presidents[str_detect(presidents$PRESIDENT,coll("john",ignore_case = T)),
+           c("YEAR","PRESIDENT","Start","Stop")]
+
+##Another example
+load("warTimes.rdata")
+#con <- url("http://www.jaredlander.com/data/warTimes.rdata")
+#load(con)
+#close(con)
+head(warTimes, 10)
+class(warTimes)
+write.table(warTimes,"warTimes.txt")
+warTimes[str_detect(string=warTimes,pattern="-")]
+theTimes <- str_split(string=warTimes,pattern="(ACAEA)|-",n=2)
+which(str_detect(string=warTimes,pattern = "-"))
+theTimes[[147]];theTimes[[150]]
+theStart <- sapply(theTimes,FUN=function(x) x[1])
+head(theStart)
+theStart <- str_trim(theStart)
+head(theStart)
+str_extract(string=theStart,pattern="January")
+theStart[str_detect(string=theStart,pattern="January")]
+head(str_extract(string=theStart,"[0-9]\\d\\d\\d"),20)
+head(str_extract(string=theStart,"\\d{4}"),20)
+head(str_extract(string=theStart,"\\d{1,3}"),20)
+head(str_extract(string=theStart,"^\\d{4}"),20)         
+head(str_extract(string=theStart,"\\d{4}$"),20)
+head(str_replace(string=theStart,"\\d",replacement = "x"))
+head(str_replace_all(string=theStart,"\\d",replacement = "x"))
+
+#########################
+##Time
+Sys.time()##1970-1-1 start
+class(Sys.time())
+str_split(Sys.time()," ")[[1]][2]
+unlist(str_split(Sys.time()," "))[2]
+
+
+url<-"http://www.stats.govt.nz/~/media/Statistics/Browse%20for%20stats/GovernmentFinanceStatisticsLocalGovernment/HOTPYeJun14/gfslg-jun14-tables.xls"
+temp<-getBinaryURL(url)
+note <- file("hellodata.xls",open="wb")#新建一个链接，方式“读写”
+writeBin(temp,note)#写入刚才的数据
+close(note)
+
+#download multi data
+require(stringr)
+require(Rcurl)
+url<-"http://rfunction.com/code/1202/"
+html<-getURL(url)
+html
+files<-str_split(html,"<li><a href=\"")
+class(files)
+files<-unlist(files)
+files<-str_extract_all(string = files, "^\\d{6}.R")
+head(files)
+class(files)
+files<-unlist(files)
+files
+class(files)
+baseurl<-"http://rfunction.com/code/1202/"
+for(i in 1:length(files)) {
+  url<-paste(baseurl,files[i],sep="")
+  temp<-getBinaryURL(url)
+  note <-file(paste(files[i],"txt",sep="."), open = "wb")
+  writeBin(temp,note)
+  close(note)
+  Sys.sleep(2)
+}
