@@ -1,0 +1,90 @@
+---
+title: "lecture note 5"
+author: "王柳盈"
+date: "2017年4月18日"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,eval=F)
+```
+
+##ANOVA
+St=Se+Sa
+St=sum of square total
+Se=sum of square within group
+Sa=sum of square between group
+$S_T=\sum_i^r\sum_j^{n_i}(x_{ij}-\bar x)^2   \  \bar x=\frac{1}{n}\sum_i^r\sum_j^{n_i}x_{ij}$ 
+$S_E=\sum_i^r\sum_j^{n_i}(x_{ij}-\bar x_i)^2   \  \bar x_i=\frac{1}{n_i}\sum_j^{n_i}x_{ij}$
+$S_A=\sum_i^r\sum_j^{n_i}(\bar x_{i}-\bar x)^2=\sum_{i=1}^r n_i(\bar x_i-\bar x)^2$
+$F=\frac{S_A/r-1}{S_E/n-r}  F_{r-1,n-r} $
+
+
+```{r}
+library("foreign")
+sales<-read.dta("sales.dta")
+class(sales$color)
+sales$color<-factor(sales$color)
+plot(sales$sales ~ sales$color,col="green")
+aggregate(sales$sales,by=list(sales$color),FUN=mean)
+fit <- aov(sales~color,data=sales)
+summary(fit)
+View(sales)
+```
+
+##Two-way factorial ANOVA
+```{r}
+attach(ToothGrowth)
+table(supp, dose)
+aggregate(len, by = list(supp, dose), FUN = mean)
+aggregate(len, by = list(supp, dose), FUN = sd)
+fit <- aov(len ~ supp * dose)#考虑交叉项
+fit <- aov(len ~ supp + dose)#不考虑交叉项
+summary(fit)
+```
+
+###an example
+
+```{r}
+x <- pretty(c(-3,3), 60)#breakpoint
+```
+
+##generate sample
+Generating multivariate normal data
+
+```{r}
+set.seed(20)
+x <- rnorm(100)
+e <- rnorm(100,0,2)
+y <- 0.5+2*x+e
+summary(y)
+qqnorm(y)
+qqline(y,lty=2)
+shapiro.test(y)
+```
+
+##example:buffon's needle
+
+```{r}
+install.packages("animation")
+library(animation)
+windows(7,7)
+buffon.needle(namx=50,interval=0)
+
+buffon <- function(n,l=0.8,d=1)
+{
+  k=0#count
+  theta <- runif(n,0,pi)#angle
+  x <- runif(n,0,d/2)#positions of central point
+  for (i in 1:n)
+  {
+    if(x[i]<=1/2*sin(theta[i]))
+      k <- k+1
+  }
+  (pi_simulate <- 2*l*n/(k*d))
+}
+buffon(1000000)
+```
+
+##central limit theorem
+
