@@ -88,3 +88,4 @@ buffon(1000000)
 
 ##central limit theorem
 
+##monte carlo integration
